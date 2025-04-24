@@ -1,0 +1,82 @@
+
+#3.1 Simple API with Flask/FastAPI
+
+
+from flask import Flask, jsonify
+
+app = Flask(__name__)
+
+@app.route('/items/<int:item_id>', methods=['GET'])
+def get_item(item_id):
+    return jsonify({
+        "item_id": item_id,
+        "description": "Sample Item"
+    })
+
+if __name__ == '__main__':
+    app.run(debug=True)
+
+
+
+
+#3.2 Data Processing with Dictionaries/Lists
+
+from collections import defaultdict
+
+def group_users_by_role(users):
+    role_groups = defaultdict(list)
+    for user in users:
+        role_groups[user['role']].append(user['name'])
+    return dict(role_groups)
+
+
+#Interacting with an External API
+
+import requests
+
+def fetch_json(url):
+    try:
+        response = requests.get(url, timeout=10)
+        response.raise_for_status()  
+        return response.json()       
+    except requests.exceptions.RequestException as e:
+        print(f"Request error: {e}")
+    except ValueError as e:
+        print(f"JSON decoding failed: {e}")
+    return None
+
+
+
+#Database Interaction (Conceptual/SQLAlchemy)
+
+from sqlalchemy import Column, Integer, String, Float, create_engine
+from sqlalchemy.orm import declarative_base
+
+Base = declarative_base()
+
+class Product(Base):
+    __tablename__ = 'products'
+
+    id = Column(Integer, primary_key=True)
+    name = Column(String, nullable=False)
+    price = Column(Float, nullable=False)
+
+
+
+
+from sqlalchemy.orm import sessionmaker
+
+engine = create_engine('sqlite:///products.db') 
+
+Base.metadata.create_all(engine)
+
+Session = sessionmaker(bind=engine)
+session = Session()
+
+expensive_products = session.query(Product).filter(Product.price > 100.0).all()
+
+
+for product in expensive_products:
+    print(f"ID: {product.id}, Name: {product.name}, Price: {product.price}")
+
+
