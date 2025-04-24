@@ -1,0 +1,41 @@
+public class PaymentDemo {
+
+ 
+    record Payment(double amount, String currency)
+    {
+     }
+
+ 
+    sealed interface Currency permits USD, EUR, GBP 
+    {
+    }
+
+ 
+    record USD() implements Currency
+    {}
+    record EUR() implements Currency
+    {}
+    record GBP() implements Currency
+    {}
+
+ 
+    public static String processPayment(Payment payment, Currency targetCurrency)
+    {
+        return switch (targetCurrency) 
+        {
+            case USD usd -> "Converting " + payment.amount() + " " + payment.currency() + " to USD";
+            case EUR eur -> "Converting " + payment.amount() + " " + payment.currency() + " to EUR";
+            case GBP gbp -> "Converting " + payment.amount() + " " + payment.currency() + " to GBP";
+        };
+    }
+
+    
+    public static void main(String[] args) 
+    {
+        var payment = new Payment(200.0, "INR");
+
+        System.out.println(processPayment(payment, new USD()));
+        System.out.println(processPayment(payment, new EUR()));
+        System.out.println(processPayment(payment, new GBP()));
+    }
+}
